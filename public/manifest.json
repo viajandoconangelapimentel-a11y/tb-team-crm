@@ -1,0 +1,21 @@
+{
+  "name": "TB Team Agentes Yaz",
+  "short_name": "TB Team CRM",
+  "description": "CRM para agentes de viajes TB Team",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#fdf4f8",
+  "theme_color": "#e07ba8",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["business", "productivity"],
+  "lang": "es-MX"
+}

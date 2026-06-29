@@ -1,26 +1,228 @@
 @import "tailwindcss";
 
+/* ── TOKENS DE DISEÑO — cambiar el color de marca en UN solo lugar ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Marca */
+  --marca: #e07ba8;
+  --marca-hover: #d4688f;
+  --marca-light: #fce8f1;
+  --marca-dark: #b85580;
+
+  /* Fondo y texto — modo claro */
+  --bg: #f8f7f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fdf4f8;
+  --bg-glass: rgba(255,255,255,0.7);
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.15);
+  --texto: #1a1523;
+  --texto-2: #4a4055;
+  --texto-3: #8a7e9a;
+  --texto-inv: #ffffff;
+
+  /* Acentos por sección */
+  --acento-dashboard: #e07ba8;
+  --acento-clientes: #4f88e3;
+  --acento-embudo: #7c5cbf;
+  --acento-agenda: #22a85a;
+  --acento-pagos: #e8a012;
+  --acento-seguimiento: #e06a20;
+  --acento-completados: #16a34a;
+  --acento-perdidos: #6b7280;
+  --acento-archivados: #78716c;
+  --acento-equipo: #0891b2;
+  --acento-compartir: #e07ba8;
+  --acento-ia: #7c3aed;
+  --acento-admin: #e07ba8;
+
+  /* Semáforo */
+  --verde: #16a34a;
+  --ambar: #d97706;
+  --rojo: #dc2626;
+
+  /* Radio y sombras */
+  --radio: 12px;
+  --radio-lg: 20px;
+  --sombra: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.05);
+  --sombra-hover: 0 4px 12px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.08);
+  --sombra-glass: 0 8px 32px rgba(0,0,0,0.08);
+
+  /* Tipografía */
+  --fuente-base: 16px;
+  --peso-normal: 400;
+  --peso-medio: 500;
+  --peso-bold: 600;
+  --peso-extrabold: 700;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── MODO OSCURO ── */
+[data-theme="dark"], .dark {
+  --bg: #120e1a;
+  --bg-card: #1e1828;
+  --bg-card-hover: #251e33;
+  --bg-glass: rgba(30,24,40,0.8);
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.15);
+  --texto: #f0ecf8;
+  --texto-2: #b5adc8;
+  --texto-3: #7a7090;
+  --marca-light: rgba(224,123,168,0.15);
+
+  --sombra: 0 1px 4px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+  --sombra-hover: 0 4px 12px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.3);
 }
 
+/* ── MODO OSCURO AUTOMÁTICO (del sistema) ── */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  [data-theme="auto"] {
+    --bg: #120e1a;
+    --bg-card: #1e1828;
+    --bg-card-hover: #251e33;
+    --bg-glass: rgba(30,24,40,0.8);
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.15);
+    --texto: #f0ecf8;
+    --texto-2: #b5adc8;
+    --texto-3: #7a7090;
+    --marca-light: rgba(224,123,168,0.15);
+    --sombra: 0 1px 4px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+    --sombra-hover: 0 4px 12px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.3);
   }
 }
 
+/* ── BASE ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-size: var(--fuente-base);
+  -webkit-font-smoothing: antialiased;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--texto);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  line-height: 1.5;
+  transition: background 200ms, color 200ms;
+  min-height: 100dvh;
+}
+
+/* ── SCROLLBAR DELGADO ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+
+/* ── FOCO VISIBLE (accesibilidad) ── */
+:focus-visible {
+  outline: 2px solid var(--marca);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── REDUCE MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── CLASES UTILITARIAS ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+}
+
+.card-glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-glass);
+}
+
+.btn-marca {
+  background: var(--marca);
+  color: white;
+  font-weight: var(--peso-medio);
+  border-radius: var(--radio);
+  padding: 10px 20px;
+  transition: background 150ms, transform 100ms, box-shadow 150ms;
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-marca:hover { background: var(--marca-hover); box-shadow: 0 4px 12px rgba(224,123,168,0.4); }
+.btn-marca:active { transform: scale(0.97); }
+.btn-marca:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-secundario {
+  background: transparent;
+  color: var(--texto-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radio);
+  padding: 10px 20px;
+  font-weight: var(--peso-medio);
+  transition: all 150ms;
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-secundario:hover { background: var(--bg-card-hover); color: var(--texto); }
+.btn-secundario:active { transform: scale(0.97); }
+
+.link-cliente {
+  color: var(--marca);
+  font-weight: var(--peso-medio);
+  text-decoration: none;
+  cursor: pointer;
+}
+.link-cliente:hover { text-decoration: underline; }
+
+/* Temperatura */
+.temp-caliente { color: #ef4444; }
+.temp-tibio { color: #f59e0b; }
+.temp-frio { color: #3b82f6; }
+
+/* Badge estados */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: var(--peso-medio);
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.badge-activo { background: rgba(224,123,168,0.15); color: var(--marca-dark); }
+.badge-ganado { background: rgba(22,163,74,0.12); color: #15803d; }
+.badge-perdido { background: rgba(107,114,128,0.12); color: #4b5563; }
+.badge-archivado { background: rgba(120,113,108,0.12); color: #57534e; }
+
+/* Skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--border) 25%, var(--bg-card-hover) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radio);
+}
+
+/* Confeti overlay */
+.confeti-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
 }

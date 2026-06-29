@@ -1,0 +1,372 @@
+// TB Team Agentes Yaz — Esquema de base de datos completo
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = env("DATABASE_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+// ─── USUARIOS Y ROLES ───────────────────────────────────────────────────────
+
+model Usuario {
+  id                    String    @id @default(cuid())
+  nombre                String
+  correo                String    @unique
+  passwordHash          String
+  rol                   String    @default("VENDEDOR")
+  activo                Boolean   @default(true)
+  avatarUrl             String?
+  metaMesClientes       Int       @default(10)
+  metaMesDinero         Float     @default(0)
+  comisionPorcentaje    Float?
+  tema                  String    @default("automatico")
+  vistaDensa            Boolean   @default(false)
+  onboardingCompletado  Boolean   @default(false)
+  resetPasswordToken    String?
+  resetPasswordExpira   DateTime?
+  intentosFallidos      Int       @default(0)
+  bloqueadoHasta        DateTime?
+  creadoEn              DateTime  @default(now())
+  actualizadoEn         DateTime  @updatedAt
+
+  clientes              Cliente[]         @relation("VendedorCliente")
+  citas                 Cita[]            @relation("VendedorCita")
+  pagos                 Pago[]            @relation("VendedorPago")
+  notas                 Nota[]
+  tareas                Tarea[]
+  plantillas            Plantilla[]
+  favoritos             Favorito[]
+  columnasVista         ColumnaVista[]
+  registrosAuditoria    RegistroAuditoria[]
+
+  @@map("usuarios")
+}
+
+// ─── CLIENTES ────────────────────────────────────────────────────────────────
+
+model Cliente {
+  id                    String    @id @default(cuid())
+  nombre                String
+  telefono              String?
+  telefonoInternacional String?
+  correo                String?
+  origen                String?
+  utmSource             String?
+  etapa                 String    @default("Lista de contactos")
+  estado                String    @default("ACTIVO")
+  temperatura           String    @default("TIBIO")
+  objecion              String?
+  motivoPerdida         String?
+  valorEstimado         Float     @default(0)
+  proximaAccion         String?
+  proximaAccionFecha    DateTime?
+  ultimoContacto        DateTime?
+  vendedorId            String?
+  cumpleanos            DateTime?
+  zona                  String?
+  documentosRecibidos   Boolean   @default(false)
+  notas                 String?
+  duplicadoDe           String?
+  eliminadoEn           DateTime?
+  empresaNombre         String?
+  empresaGiro           String?
+  empresaPuesto         String?
+  empresaRFC            String?
+  empresaSitio          String?
+  empresaDireccion      String?
+  empresaTamano         String?
+  empresaNotas          String?
+  creadoEn              DateTime  @default(now())
+  actualizadoEn         DateTime  @updatedAt
+  archivaEn             DateTime?
+  ganadoEn              DateTime?
+  perdidoEn             DateTime?
+
+  vendedor              Usuario?          @relation("VendedorCliente", fields: [vendedorId], references: [id])
+  citas                 Cita[]
+  pagos                 Pago[]
+  notas_rel             Nota[]
+  archivos              Archivo[]
+  tareas                Tarea[]
+  historial             EventoHistorial[]
+  etiquetas             ClienteEtiqueta[]
+  favoritos             Favorito[]
+
+  @@index([nombre])
+  @@index([telefono])
+  @@index([correo])
+  @@index([etapa])
+  @@index([estado])
+  @@index([vendedorId])
+  @@index([eliminadoEn])
+  @@map("clientes")
+}
+
+// ─── CITAS ───────────────────────────────────────────────────────────────────
+
+model Cita {
+  id            String    @id @default(cuid())
+  titulo        String
+  clienteId     String?
+  vendedorId    String?
+  inicio        DateTime
+  fin           DateTime
+  googleEventId String?
+  meetLink      String?
+  confirmada    Boolean   @default(false)
+  notas         String?
+  origen        String?
+  eliminadoEn   DateTime?
+  creadoEn      DateTime  @default(now())
+  actualizadoEn DateTime  @updatedAt
+
+  cliente       Cliente?  @relation(fields: [clienteId], references: [id])
+  vendedor      Usuario?  @relation("VendedorCita", fields: [vendedorId], references: [id])
+
+  @@index([clienteId])
+  @@index([vendedorId])
+  @@index([inicio])
+  @@map("citas")
+}
+
+// ─── PAGOS ───────────────────────────────────────────────────────────────────
+
+model Pago {
+  id               String    @id @default(cuid())
+  clienteId        String
+  vendedorId       String?
+  monto            Float
+  moneda           String    @default("MXN")
+  metodo           String
+  estatus          String    @default("pendiente")
+  concepto         String?
+  folioConsecutivo Int?
+  fechaPago        DateTime?
+  fechaVencimiento DateTime?
+  esParcialidad    Boolean   @default(false)
+  totalContrato    Float?
+  notas            String?
+  eliminadoEn      DateTime?
+  creadoEn         DateTime  @default(now())
+  actualizadoEn    DateTime  @updatedAt
+
+  cliente          Cliente   @relation(fields: [clienteId], references: [id])
+  vendedor         Usuario?  @relation("VendedorPago", fields: [vendedorId], references: [id])
+
+  @@index([clienteId])
+  @@index([estatus])
+  @@map("pagos")
+}
+
+// ─── NOTAS Y LÍNEA DE TIEMPO ─────────────────────────────────────────────────
+
+model Nota {
+  id          String    @id @default(cuid())
+  clienteId   String
+  usuarioId   String
+  contenido   String
+  tipo        String    @default("nota")
+  fechaReal   DateTime  @default(now())
+  eliminadoEn DateTime?
+  creadoEn    DateTime  @default(now())
+
+  cliente     Cliente   @relation(fields: [clienteId], references: [id])
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@index([clienteId])
+  @@map("notas")
+}
+
+model EventoHistorial {
+  id            String    @id @default(cuid())
+  clienteId     String
+  tipo          String
+  descripcion   String
+  usuarioNombre String?
+  metadata      String?
+  creadoEn      DateTime  @default(now())
+
+  cliente       Cliente   @relation(fields: [clienteId], references: [id])
+
+  @@index([clienteId])
+  @@index([creadoEn])
+  @@map("eventos_historial")
+}
+
+// ─── ARCHIVOS ────────────────────────────────────────────────────────────────
+
+model Archivo {
+  id          String    @id @default(cuid())
+  clienteId   String
+  nombre      String
+  etiqueta    String    @default("Otro")
+  tipo        String
+  tamano      Int
+  datos       String?
+  urlExterno  String?
+  subidoPor   String?
+  eliminadoEn DateTime?
+  creadoEn    DateTime  @default(now())
+
+  cliente     Cliente   @relation(fields: [clienteId], references: [id])
+
+  @@index([clienteId])
+  @@map("archivos")
+}
+
+// ─── TAREAS / SEGUIMIENTO ────────────────────────────────────────────────────
+
+model Tarea {
+  id           String    @id @default(cuid())
+  clienteId    String?
+  usuarioId    String
+  titulo       String
+  descripcion  String?
+  fechaVence   DateTime?
+  horaVence    String?
+  completada   Boolean   @default(false)
+  completadaEn DateTime?
+  tipo         String    @default("recordatorio")
+  eliminadoEn  DateTime?
+  creadoEn     DateTime  @default(now())
+
+  cliente      Cliente?  @relation(fields: [clienteId], references: [id])
+  usuario      Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([fechaVence])
+  @@map("tareas")
+}
+
+// ─── ETIQUETAS ───────────────────────────────────────────────────────────────
+
+model Etiqueta {
+  id       String            @id @default(cuid())
+  nombre   String            @unique
+  color    String            @default("#e07ba8")
+  creadoEn DateTime          @default(now())
+  clientes ClienteEtiqueta[]
+
+  @@map("etiquetas")
+}
+
+model ClienteEtiqueta {
+  clienteId  String
+  etiquetaId String
+  cliente    Cliente   @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  etiqueta   Etiqueta  @relation(fields: [etiquetaId], references: [id], onDelete: Cascade)
+
+  @@id([clienteId, etiquetaId])
+  @@map("cliente_etiquetas")
+}
+
+// ─── PLANTILLAS DE MENSAJES ──────────────────────────────────────────────────
+
+model Plantilla {
+  id         String    @id @default(cuid())
+  usuarioId  String?
+  nombre     String
+  tipo       String    @default("whatsapp")
+  asunto     String?
+  cuerpo     String
+  etapa      String?
+  objecion   String?
+  esFavorita Boolean   @default(false)
+  esGlobal   Boolean   @default(false)
+  creadoEn   DateTime  @default(now())
+
+  usuario    Usuario?  @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@map("plantillas")
+}
+
+// ─── FAVORITOS ───────────────────────────────────────────────────────────────
+
+model Favorito {
+  usuarioId String
+  clienteId String
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  cliente   Cliente @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  @@id([usuarioId, clienteId])
+  @@map("favoritos")
+}
+
+// ─── CONFIGURACIÓN DEL NEGOCIO ───────────────────────────────────────────────
+
+model ConfigNegocio {
+  id                      String   @id @default("1")
+  nombreNegocio           String   @default("TB Team Agentes Yaz")
+  colorMarca              String   @default("#e07ba8")
+  moneda                  String   @default("MXN")
+  husoHorario             String   @default("America/Cancun")
+  horarioInicio           String   @default("09:00")
+  horarioFin              String   @default("12:00")
+  duracionCitaMin         Int      @default(30)
+  mensajeWhatsapp         String   @default("Hola {nombre}, mi nombre es Yazmín Leal, gracias por tu interés. ¿Te late si agendamos una llamada para platicarte cómo te puedo ayudar?")
+  metaMesClientes         Int      @default(10)
+  comisionGlobal          Float?
+  umbralEstancamientoDias Int      @default(7)
+  motivosPerdida          String   @default("[\"Está caro\",\"Se fue con la competencia\",\"No contestó\",\"No es buen momento\",\"No calificaba\",\"Otro\"]")
+  metodosPago             String   @default("[\"Transferencia\",\"Tarjeta\",\"Liga de pago\"]")
+  etapasEmbudo            String   @default("[\"Lista de contactos\",\"Información\",\"Invitación\",\"Presentación\",\"Seguimiento 1 resolver dudas\",\"Seguimiento 2 envío de link de registro e instrucciones\",\"Seguimiento 3 Certificación PTA\",\"Alta en ESCALA\",\"Alta en grupos de difusión\",\"Sesión Presentación Zoom\",\"Contacto semana 1\",\"Contacto semana 2\",\"Contacto semana 3\",\"Contacto semana 4\"]")
+  logoUrl                 String?
+  numeroWhatsapp          String   @default("5219981234567")
+  actualizadoEn           DateTime @updatedAt
+
+  @@map("config_negocio")
+}
+
+// ─── AUDITORÍA ───────────────────────────────────────────────────────────────
+
+model RegistroAuditoria {
+  id            String    @id @default(cuid())
+  usuarioId     String?
+  usuarioNombre String?
+  accion        String
+  entidad       String
+  entidadId     String?
+  descripcion   String
+  ip            String?
+  creadoEn      DateTime  @default(now())
+
+  usuario       Usuario?  @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
+  @@index([creadoEn])
+  @@map("registros_auditoria")
+}
+
+// ─── COLUMNAS POR VISTA (preferencias usuario) ───────────────────────────────
+
+model ColumnaVista {
+  id        String  @id @default(cuid())
+  usuarioId String
+  vista     String
+  columnas  String
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, vista])
+  @@map("columnas_vistas")
+}
+
+// ─── LEADS DE LANDING ────────────────────────────────────────────────────────
+
+model LeadLanding {
+  id          String    @id @default(cuid())
+  nombre      String
+  whatsapp    String
+  correo      String?
+  utmSource   String?
+  procesado   Boolean   @default(false)
+  clienteId   String?
+  creadoEn    DateTime  @default(now())
+
+  @@map("leads_landing")
+}
+
