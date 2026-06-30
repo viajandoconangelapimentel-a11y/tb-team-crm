@@ -6,7 +6,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth
 
   // Rutas públicas
-  const publicas = ["/login", "/agenda/", "/landing", "/api/leads"]
+  const publicas = ["/login", "/agenda/", "/landing", "/api/leads", "/api/auth"]
   if (publicas.some(p => pathname.startsWith(p))) {
     return NextResponse.next()
   }
