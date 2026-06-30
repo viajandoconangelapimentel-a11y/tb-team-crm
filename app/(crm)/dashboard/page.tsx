@@ -29,6 +29,7 @@ export default async function DashboardPage() {
     leadsNuevos,
     config,
     usuarioDB,
+    residualesAnio,
     historial6meses,
   ] = await Promise.all([
     // Total activos
@@ -57,6 +58,8 @@ export default async function DashboardPage() {
     prisma.configNegocio.findUnique({ where: { id: "1" } }),
     // Usuario con su meta
     prisma.usuario.findUnique({ where: { id: usuario.id }, select: { metaMesClientes: true, metaMesDinero: true, nombre: true } }),
+    // Residuales del año actual
+    prisma.residual.findMany({ where: { anio: hoy.getFullYear() }, orderBy: { mes: "asc" } }),
     // Historial de 6 meses
     prisma.cliente.findMany({
       where: { ...filtro, estado: "GANADO", ganadoEn: { gte: new Date(hoy.getFullYear(), hoy.getMonth() - 5, 1) }, eliminadoEn: null },
@@ -82,6 +85,8 @@ export default async function DashboardPage() {
     })
   }
 
+  const residualMesActual = residualesAnio.find((r: any) => r.mes === hoy.getMonth() + 1)?.monto ?? 0
+  const residualAnual = residualesAnio.reduce((s: number, r: any) => s + r.monto, 0)
   const metaClientes = usuarioDB?.metaMesClientes ?? config?.metaMesClientes ?? 10
   const pctMeta = Math.round((clientesMesActual / metaClientes) * 100)
 
@@ -102,6 +107,10 @@ export default async function DashboardPage() {
         metaClientes,
         pctMeta,
         meses6,
+        residualMes: residualMesActual,
+        residualAnual,
+        mesActual: hoy.getMonth() + 1,
+        anioActual: hoy.getFullYear(),
         nombreUsuario: usuarioDB?.nombre ?? usuario.nombre,
       }}
     />

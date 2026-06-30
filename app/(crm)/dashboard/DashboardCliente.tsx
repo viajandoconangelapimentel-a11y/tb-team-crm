@@ -1,7 +1,8 @@
 "use client"
+import { useState } from "react"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import Link from "next/link"
-import { Users, CalendarDays, Wallet, ListChecks, Trophy, AlertTriangle, TrendingUp, TrendingDown, Target, Zap } from "lucide-react"
+import { Users, CalendarDays, Wallet, ListChecks, Trophy, AlertTriangle, TrendingUp, TrendingDown, Target, Zap, Coins } from "lucide-react"
 
 interface DatosDashboard {
   totalActivos: number
@@ -18,6 +19,10 @@ interface DatosDashboard {
   metaClientes: number
   pctMeta: number
   meses6: { mes: string; clientes: number; ingresos: number }[]
+  residualMes: number
+  residualAnual: number
+  mesActual: number
+  anioActual: number
   nombreUsuario: string
 }
 
@@ -53,6 +58,82 @@ function NumeroGrande({ valor, label, icono: Icono, acento, href, variacion: v }
     </div>
   )
   return href ? <Link href={href} className="block">{contenido}</Link> : contenido
+}
+
+const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
+
+function CasillaResidual({ inicial, anual, mes, anio }: { inicial: number; anual: number; mes: number; anio: number }) {
+  const [monto, setMonto] = useState(inicial.toString())
+  const [guardado, setGuardado] = useState(false)
+  const [cargando, setCargando] = useState(false)
+
+  async function guardar() {
+    setCargando(true)
+    await fetch("/api/residuales", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ anio, mes, monto: parseFloat(monto) || 0 }),
+    })
+    setCargando(false)
+    setGuardado(true)
+    setTimeout(() => setGuardado(false), 2000)
+  }
+
+  return (
+    <div className="card p-5 col-span-2">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(124,58,237,0.12)" }}>
+          <Coins size={18} style={{ color: "#7c3aed" }} />
+        </div>
+        <div>
+          <p className="font-semibold text-sm" style={{ color: "var(--texto)" }}>Residuales</p>
+          <p className="text-xs" style={{ color: "var(--texto-3)" }}>Comisiones recurrentes</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {/* Residual del mes */}
+        <div>
+          <label className="text-xs font-medium block mb-1.5" style={{ color: "var(--texto-2)" }}>
+            {MESES[mes - 1]} {anio}
+          </label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium" style={{ color: "var(--texto-3)" }}>$</span>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={monto}
+                onChange={e => setMonto(e.target.value)}
+                onBlur={guardar}
+                onKeyDown={e => e.key === "Enter" && guardar()}
+                className="w-full pl-7 pr-3 py-2.5 rounded-xl border text-sm font-bold outline-none"
+                style={{ background: "var(--bg)", borderColor: "var(--border-strong)", color: "#7c3aed" }}
+                placeholder="0.00"
+              />
+            </div>
+            <button onClick={guardar} disabled={cargando}
+              className="px-3 py-2 rounded-xl text-xs font-medium transition-all"
+              style={{ background: guardado ? "var(--verde)" : "rgba(124,58,237,0.12)", color: guardado ? "white" : "#7c3aed" }}>
+              {guardado ? "✓" : cargando ? "…" : "Guardar"}
+            </button>
+          </div>
+        </div>
+        {/* Total anual */}
+        <div>
+          <label className="text-xs font-medium block mb-1.5" style={{ color: "var(--texto-2)" }}>
+            Total {anio}
+          </label>
+          <div className="px-3 py-2.5 rounded-xl border" style={{ background: "rgba(124,58,237,0.06)", borderColor: "rgba(124,58,237,0.2)" }}>
+            <p className="text-lg font-extrabold" style={{ color: "#7c3aed" }}>
+              ${(anual + (parseFloat(monto) || 0) - inicial).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+            </p>
+            <p className="text-[10px]" style={{ color: "var(--texto-3)" }}>suma de residuales del año</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export function DashboardCliente({ datos }: { datos: DatosDashboard }) {
@@ -119,6 +200,16 @@ export function DashboardCliente({ datos }: { datos: DatosDashboard }) {
         <p className="text-sm" style={{ color: "var(--texto-3)" }}>
           {datos.pctMeta}% — {datos.pctMeta >= 100 ? "¡Meta cumplida! 🎉" : `faltan ${datos.metaClientes - datos.clientesMesActual} cierres`}
         </p>
+      </div>
+
+      {/* RESIDUALES */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <CasillaResidual
+          inicial={datos.residualMes}
+          anual={datos.residualAnual}
+          mes={datos.mesActual}
+          anio={datos.anioActual}
+        />
       </div>
 
       {/* BENTO GRID de números */}

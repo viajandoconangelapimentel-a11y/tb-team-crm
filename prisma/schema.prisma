@@ -371,3 +371,18 @@ model LeadLanding {
   @@map("leads_landing")
 }
 
+// ─── RESIDUALES MENSUALES ────────────────────────────────────────────────────
+
+model Residual {
+  id            String   @id @default(cuid())
+  anio          Int
+  mes           Int
+  monto         Float    @default(0)
+  notas         String?
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@unique([anio, mes])
+  @@map("residuales")
+}
+
