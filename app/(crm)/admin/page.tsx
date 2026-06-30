@@ -75,7 +75,7 @@ export default async function AdminPage() {
           <h2 className="text-sm font-semibold" style={{ color: "var(--texto)" }}>Actividad reciente</h2>
         </div>
         <div className="space-y-1">
-          {bitacora.map(r => (
+          {bitacora.map((r: any) => (
             <div key={r.id} className="card flex items-center gap-3 px-4 py-2.5">
               <div className="flex-1 min-w-0">
                 <p className="text-sm" style={{ color: "var(--texto)" }}>{r.descripcion}</p>
