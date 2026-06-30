@@ -196,7 +196,7 @@ export function ExpedienteCliente({ cliente, config, vendedores, etiquetas, plan
           { label: "Correo", valor: cliente.correo },
           { label: "Origen", valor: cliente.origen },
           { label: "Etapa", valor: cliente.etapa },
-          { label: "Valor estimado", valor: cliente.valorEstimado ? `$${cliente.valorEstimado.toLocaleString("es-MX")}` : null, tooltip: "Cuánto dinero representa este cliente si cierra. Sirve para saber a quién priorizar." },
+          { label: "Paquete elegido", valor: cliente.valorEstimado ? `$${cliente.valorEstimado.toLocaleString("es-MX")}` : null, tooltip: "Paquete que eligió o le interesa a este cliente." },
           { label: "Zona", valor: cliente.zona },
         ].map(({ label, valor, tooltip }) => valor ? (
           <div key={label}>

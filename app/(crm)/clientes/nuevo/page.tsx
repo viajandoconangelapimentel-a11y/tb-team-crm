@@ -204,21 +204,23 @@ export default function NuevoClientePage() {
             </select>
           </div>
 
-          {/* Valor */}
+          {/* Paquete elegido */}
           <div>
             <label className="text-sm font-medium flex items-center gap-1 mb-1.5" style={{ color: "var(--texto-2)" }}>
-              Valor estimado ($)
-              <InfoTooltip texto="¿Cuánto dinero representa este cliente?" consejo="Sirve para priorizar a quién atender primero." />
+              Paquete elegido
+              <InfoTooltip texto="¿Qué paquete eligió o le interesa a este cliente?" consejo="El valor se llena automáticamente según el paquete." />
             </label>
-            <input
-              type="number"
-              min="0"
+            <select
               value={form.valorEstimado}
               onChange={e => set("valorEstimado", e.target.value)}
-              placeholder="0"
               className="w-full px-4 py-2.5 rounded-xl border text-sm outline-none"
               style={{ background: "var(--bg)", borderColor: "var(--border-strong)", color: "var(--texto)" }}
-            />
+            >
+              <option value="">Sin paquete aún</option>
+              <option value="68.99">EVO Basics — $68.99</option>
+              <option value="79.98">EVO Essentials — $79.98</option>
+              <option value="299.00">EVO Bundle — $299.00</option>
+            </select>
           </div>
         </div>
 
