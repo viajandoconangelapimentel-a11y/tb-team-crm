@@ -5,11 +5,12 @@ import { useToast } from "@/components/ui/Toast"
 import { ArrowLeft, Save } from "lucide-react"
 
 const ETAPAS = [
-  "Lista de contactos","Invitación","Información","Presentación",
-  "Seguimiento 1 resolver dudas","Seguimiento 2 envío de link de registro e instrucciones",
-  "Seguimiento 3 Certificación PTA","Alta en ESCALA","Alta en grupos de difusión",
-  "Alta en sistema back office","Duplicación","Primer viaje vendido",
-  "3 viajes vendidos","5 viajes vendidos",
+  "Lista de contactos", "Invitación", "Información", "Cafesito",
+  "Presentación", "Sesión 1 a 1", "Networking",
+  "Seguimiento 1 resolver dudas", "Seguimiento 2 envío de link de registro e instrucciones",
+  "Seguimiento 3 Certificación PTA", "Alta en ESCALA", "Bienvenida en grupo de FB",
+  "Site inspection", "Alta en grupos de difusión", "Alta en sistema back office",
+  "Duplicación", "Primer viaje vendido", "3 viajes vendidos", "5 viajes vendidos",
 ]
 
 const ORIGENES = ["Instagram","Facebook","WhatsApp","Recomendado","Landing","TikTok","Otro"]

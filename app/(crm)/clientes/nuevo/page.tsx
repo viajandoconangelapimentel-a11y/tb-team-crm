@@ -7,11 +7,12 @@ import { useToast } from "@/components/ui/Toast"
 import { InfoTooltip } from "@/components/ui/Tooltip"
 
 const ETAPAS = [
-  "Lista de contactos", "Información", "Invitación", "Presentación",
+  "Lista de contactos", "Invitación", "Información", "Cafesito",
+  "Presentación", "Sesión 1 a 1", "Networking",
   "Seguimiento 1 resolver dudas", "Seguimiento 2 envío de link de registro e instrucciones",
-  "Seguimiento 3 Certificación PTA", "Alta en ESCALA", "Alta en grupos de difusión",
-  "Sesión Presentación Zoom", "Contacto semana 1", "Contacto semana 2",
-  "Contacto semana 3", "Contacto semana 4"
+  "Seguimiento 3 Certificación PTA", "Alta en ESCALA", "Bienvenida en grupo de FB",
+  "Site inspection", "Alta en grupos de difusión", "Alta en sistema back office",
+  "Duplicación", "Primer viaje vendido", "3 viajes vendidos", "5 viajes vendidos",
 ]
 
 const ORIGENES = ["Instagram", "Facebook", "WhatsApp", "Recomendado", "Landing", "Agenda", "Evento", "Otro"]
