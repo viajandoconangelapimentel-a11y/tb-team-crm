@@ -151,9 +151,42 @@ export function ExpedienteCliente({ cliente, config, vendedores, etiquetas, plan
       {/* Botones de contacto y estado */}
       <div className="flex flex-wrap gap-2">
         {cliente.telefono && (
-          <a href={urlWA} target="_blank" rel="noopener noreferrer" className="btn-marca text-sm">
-            <MessageCircle size={16} /> WhatsApp
-          </a>
+          <div className="relative group">
+            <button className="btn-marca text-sm">
+              <MessageCircle size={16} /> WhatsApp ▾
+            </button>
+            <div className="absolute left-0 top-full mt-1 z-50 bg-white border border-[var(--border)] rounded-xl shadow-xl min-w-[260px] py-1 hidden group-hover:block">
+              {/* Mensaje de seguimiento */}
+              <p className="text-[10px] font-semibold uppercase text-[var(--texto-3)] px-3 pt-2 pb-1">Mensajes rápidos</p>
+              {[
+                { label: "👋 Primer contacto", msg: `Hola ${cliente.nombre.split(" ")[0]}, mi nombre es Yazmín Leal. Vi tu interés en empezar tu agencia de viajes desde casa y me encantaría platicarte cómo funciona. ¿Tienes 15 minutos esta semana?` },
+                { label: "🔥 Seguimiento caliente", msg: `Hola ${cliente.nombre.split(" ")[0]}! Solo quería saber si tuviste oportunidad de pensar en lo que platicamos. ¿Tienes alguna duda que yo pueda resolver? 😊` },
+                { label: "❄️ Reactivar frío", msg: `Hola ${cliente.nombre.split(" ")[0]}! Han pasado unos días y quería saber cómo estás. ¿Sigues interesada en lo de la agencia de viajes? Tengo una novedad que creo que te va a gustar 🌴` },
+                { label: "📅 Confirmar cita", msg: `Hola ${cliente.nombre.split(" ")[0]} 😊, te escribo para confirmar nuestra llamada. ¿Seguimos bien? ¡Nos vemos pronto!` },
+              ].map(({ label, msg }) => (
+                <a key={label} href={`https://wa.me/${telWA}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--bg-card-hover)] text-[var(--texto)]">
+                  {label}
+                </a>
+              ))}
+
+              {/* Cotizaciones */}
+              <p className="text-[10px] font-semibold uppercase text-[var(--texto-3)] px-3 pt-3 pb-1 border-t border-[var(--border)] mt-1">Enviar cotización</p>
+              {[
+                { label: "EVO YZ — $0", precio: "$0", desc: "Paquete EVO YZ sin costo de entrada" },
+                { label: "EVO Basics — $68.99", precio: "$68.99", desc: "Paquete EVO Basics" },
+                { label: "EVO Essentials — $79.98", precio: "$79.98", desc: "Paquete EVO Essentials" },
+                { label: "EVO Bundle — $299.00", precio: "$299.00", desc: "Paquete EVO Bundle completo" },
+              ].map(({ label, precio, desc }) => (
+                <a key={label}
+                  href={`https://wa.me/${telWA}?text=${encodeURIComponent(`Hola ${cliente.nombre.split(" ")[0]}! 🌴 Te comparto la cotización que platicamos:\n\n📦 *${desc}*\n💰 Inversión: *${precio}*\n\n¿Te gustaría que te explique qué incluye y cómo empezar? ¡Con gusto te oriento! 😊`)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-[var(--bg-card-hover)] text-[var(--texto)]">
+                  💰 {label}
+                </a>
+              ))}
+            </div>
+          </div>
         )}
         {cliente.correo && (
           <a
