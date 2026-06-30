@@ -143,6 +143,7 @@ export function EditarClienteForm({ cliente }: Props) {
             className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
             style={{ background: "var(--bg)", borderColor: "var(--border-strong)", color: "var(--texto)" }}>
             <option value="">Sin paquete aún</option>
+            <option value="0">EVO YZ — $0</option>
             <option value="68.99">EVO Basics — $68.99</option>
             <option value="79.98">EVO Essentials — $79.98</option>
             <option value="299.00">EVO Bundle — $299.00</option>
