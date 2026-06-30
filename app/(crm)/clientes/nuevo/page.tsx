@@ -26,7 +26,7 @@ export default function NuevoClientePage() {
     nombre: "", telefono: "", correo: "", origen: "Instagram",
     etapa: "Lista de contactos", temperatura: "TIBIO",
     objecion: "", valorEstimado: "", proximaAccion: "", proximaAccionFecha: "",
-    zona: "", notas: "",
+    zona: "", notas: "", fechaNacimiento: "",
   })
 
   const set = (k: string, v: string) => setForm(prev => ({ ...prev, [k]: v }))
@@ -44,6 +44,7 @@ export default function NuevoClientePage() {
         body: JSON.stringify({
           ...form,
           valorEstimado: form.valorEstimado ? parseFloat(form.valorEstimado) : 0,
+          fechaNacimiento: form.fechaNacimiento ? new Date(form.fechaNacimiento).toISOString() : null,
         }),
       })
 
@@ -250,6 +251,18 @@ export default function NuevoClientePage() {
               style={{ background: "var(--bg)", borderColor: "var(--border-strong)", color: "var(--texto)" }}
             />
           </div>
+        </div>
+
+        {/* Fecha de nacimiento */}
+        <div>
+          <label className="text-sm font-medium block mb-1.5" style={{ color: "var(--texto-2)" }}>Fecha de nacimiento</label>
+          <input
+            type="date"
+            value={form.fechaNacimiento}
+            onChange={e => set("fechaNacimiento", e.target.value)}
+            className="w-full px-4 py-2.5 rounded-xl border text-sm outline-none"
+            style={{ background: "var(--bg)", borderColor: "var(--border-strong)", color: "var(--texto)" }}
+          />
         </div>
 
         {/* Zona */}

@@ -17,7 +17,7 @@ export default async function EmbudoPage() {
   const etapas: string[] = config?.etapasEmbudo ? JSON.parse(config.etapasEmbudo) : []
 
   const clientes = await prisma.cliente.findMany({
-    where: { ...filtro, estado: "ACTIVO", eliminadoEn: null },
+    where: { ...filtro, estado: { in: ["ACTIVO", "GANADO"] }, eliminadoEn: null },
     include: { etiquetas: { include: { etiqueta: true } }, vendedor: { select: { nombre: true } } },
     orderBy: { actualizadoEn: "desc" },
   })

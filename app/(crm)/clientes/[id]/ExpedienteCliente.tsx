@@ -230,6 +230,7 @@ export function ExpedienteCliente({ cliente, config, vendedores, etiquetas, plan
           { label: "Origen", valor: cliente.origen },
           { label: "Etapa", valor: cliente.etapa },
           { label: "Paquete elegido", valor: cliente.valorEstimado ? `$${cliente.valorEstimado.toLocaleString("es-MX")}` : null, tooltip: "Paquete que eligió o le interesa a este cliente." },
+          { label: "Fecha de nacimiento", valor: cliente.fechaNacimiento ? new Date(cliente.fechaNacimiento).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) : null },
           { label: "Zona", valor: cliente.zona },
         ].map(({ label, valor, tooltip }) => valor ? (
           <div key={label}>

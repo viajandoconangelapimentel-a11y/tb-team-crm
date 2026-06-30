@@ -61,6 +61,7 @@ model Cliente {
   objecion              String?
   motivoPerdida         String?
   valorEstimado         Float     @default(0)
+  fechaNacimiento       DateTime?
   proximaAccion         String?
   proximaAccionFecha    DateTime?
   ultimoContacto        DateTime?

@@ -20,6 +20,7 @@ interface Cliente {
   id: string
   nombre: string
   etapa: string
+  estado: string
   temperatura: string
   valorEstimado: number
   proximaAccionFecha: string | null
@@ -72,14 +73,17 @@ function TarjetaCliente({ cliente, umbralDias, overlay = false }: { cliente: Cli
       className={`rounded-xl p-3 cursor-grab active:cursor-grabbing transition-all ${overlay ? "rotate-1 shadow-lg" : "hover:shadow-md"}`}
     >
       <div className="flex items-start justify-between gap-2 mb-1.5">
-        <Link
-          href={`/clientes/${cliente.id}`}
-          className="text-sm font-semibold leading-tight hover:underline"
-          style={{ color: color.texto }}
-          onClick={e => e.stopPropagation()}
-        >
-          {cliente.nombre}
-        </Link>
+        <div className="flex items-center gap-1 min-w-0">
+          {cliente.estado === "GANADO" && <span title="Ganado">🏆</span>}
+          <Link
+            href={`/clientes/${cliente.id}`}
+            className="text-sm font-semibold leading-tight hover:underline truncate"
+            style={{ color: color.texto }}
+            onClick={e => e.stopPropagation()}
+          >
+            {cliente.nombre}
+          </Link>
+        </div>
         <BadgeTemperatura temp={cliente.temperatura} />
       </div>
 

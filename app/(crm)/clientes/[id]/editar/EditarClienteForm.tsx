@@ -36,6 +36,9 @@ export function EditarClienteForm({ cliente }: Props) {
     proximaAccionFecha: cliente.proximaAccionFecha
       ? new Date(cliente.proximaAccionFecha).toISOString().slice(0, 16)
       : "",
+    fechaNacimiento: cliente.fechaNacimiento
+      ? new Date(cliente.fechaNacimiento).toISOString().slice(0, 10)
+      : "",
   })
   const [cargando, setCargando] = useState(false)
   const set = (k: string, v: any) => setForm(p => ({ ...p, [k]: v }))
@@ -47,6 +50,7 @@ export function EditarClienteForm({ cliente }: Props) {
       ...form,
       valorEstimado: Number(form.valorEstimado),
       proximaAccionFecha: form.proximaAccionFecha ? new Date(form.proximaAccionFecha).toISOString() : null,
+      fechaNacimiento: form.fechaNacimiento ? new Date(form.fechaNacimiento).toISOString() : null,
     }
     const res = await fetch(`/api/clientes/${cliente.id}`, {
       method: "PATCH",
@@ -148,6 +152,13 @@ export function EditarClienteForm({ cliente }: Props) {
             <option value="79.98">EVO Essentials — $79.98</option>
             <option value="299.00">EVO Bundle — $299.00</option>
           </select>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium block mb-1.5" style={{ color: "var(--texto-2)" }}>Fecha de nacimiento</label>
+          <input type="date" value={form.fechaNacimiento} onChange={e => set("fechaNacimiento", e.target.value)}
+            className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
+            style={{ background: "var(--bg)", borderColor: "var(--border-strong)", color: "var(--texto)" }} />
         </div>
 
         {campo("Próxima acción", "proximaAccion", "text", "Llamar y resolver dudas de precio")}
