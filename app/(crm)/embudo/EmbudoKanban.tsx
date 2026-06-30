@@ -33,12 +33,30 @@ interface Props {
   umbralDias: number
 }
 
+const COLORES_TARJETA = [
+  { bg: "#fce8f1", border: "#e07ba8", texto: "#b85580" },
+  { bg: "#e8f4ff", border: "#4f88e3", texto: "#2563c0" },
+  { bg: "#f0ebff", border: "#7c5cbf", texto: "#5b3fa0" },
+  { bg: "#e8faf2", border: "#22a85a", texto: "#16803d" },
+  { bg: "#fff8e8", border: "#e8a012", texto: "#b57800" },
+  { bg: "#ffe8e8", border: "#e05a5a", texto: "#b83030" },
+  { bg: "#e8f8ff", border: "#0891b2", texto: "#0670a0" },
+  { bg: "#f5ffe8", border: "#6abf22", texto: "#4a8f0f" },
+]
+
+function colorCliente(nombre: string) {
+  let hash = 0
+  for (let i = 0; i < nombre.length; i++) hash = nombre.charCodeAt(i) + ((hash << 5) - hash)
+  return COLORES_TARJETA[Math.abs(hash) % COLORES_TARJETA.length]
+}
+
 function TarjetaCliente({ cliente, umbralDias, overlay = false }: { cliente: Cliente; umbralDias: number; overlay?: boolean }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: cliente.id })
   const accionVencida = cliente.proximaAccionFecha && new Date(cliente.proximaAccionFecha) < new Date()
   const diasEtapa = diasDesde(new Date(cliente.actualizadoEn))
   const estancado = diasEtapa >= umbralDias
 
+  const color = colorCliente(cliente.nombre)
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -48,15 +66,16 @@ function TarjetaCliente({ cliente, umbralDias, overlay = false }: { cliente: Cli
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{ ...style, background: color.bg, borderColor: color.border, borderWidth: 1, borderStyle: "solid" }}
       {...attributes}
       {...listeners}
-      className={`card p-3 cursor-grab active:cursor-grabbing hover:shadow-[var(--sombra-hover)] transition-all ${overlay ? "rotate-1 shadow-lg" : ""}`}
+      className={`rounded-xl p-3 cursor-grab active:cursor-grabbing transition-all ${overlay ? "rotate-1 shadow-lg" : "hover:shadow-md"}`}
     >
       <div className="flex items-start justify-between gap-2 mb-1.5">
         <Link
           href={`/clientes/${cliente.id}`}
-          className="link-cliente text-sm font-semibold leading-tight"
+          className="text-sm font-semibold leading-tight hover:underline"
+          style={{ color: color.texto }}
           onClick={e => e.stopPropagation()}
         >
           {cliente.nombre}
